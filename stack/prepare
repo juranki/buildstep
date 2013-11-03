@@ -5,24 +5,27 @@
 
 #
 # SYSTEM PACKAGES
+# filesystem conflicts with some other system, so ignore it first
 #
-apt-get update
-xargs apt-get install -y --force-yes < /build/packages.txt
-apt-get clean
+echo "system packages"
+pacman -Syu -q --noconfirm --ignore filesystem
+pacman -Su -q --noconfirm
+xargs pacman -S --noconfirm --needed < /build/packages.txt
 
 #
 # SUPPORTED BUILDPACKS
 #
+echo "buildpacks"
 mkdir -p /build/buildpacks
 cd /build/buildpacks
 xargs -L 1 git clone --depth=1 < /build/buildpacks.txt
 
 #
-# MISC
+#  MISC
 #
 
 # Ruby buildpack system configuration
-update-alternatives --set ruby /usr/bin/ruby1.9.1
-update-alternatives --set gem /usr/bin/gem1.9.1
-gem install bundler
-cd /build/buildpacks/heroku-buildpack-ruby && bundle install
+#update-alternatives --set ruby /usr/bin/ruby1.9.1
+#update-alternatives --set gem /usr/bin/gem1.9.1
+#gem install bundler
+#cd /build/buildpacks/heroku-buildpack-ruby && bundle install
